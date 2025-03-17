@@ -32,8 +32,11 @@ Ce projet permet de gérer des tournois d'échecs en ligne de commande (CLI) et 
 2.	Suivez les instructions dans le terminal pour créer un tournoi, ajouter des joueurs et saisir les résultats des matchs.
 
 ## Contribuer
-	1.	Fork ce repository.
-	2.	Crée une branche pour ta fonctionnalité (git checkout -b feature/nom-de-fonctionnalite).
-	3.	Commit tes modifications (git commit -am 'Ajout d'une nouvelle fonctionnalité').
-	4.	Pousse ta branche (git push origin feature/nom-de-fonctionnalite).
-	5.	Ouvre une Pull Request.
+1.	Fork ce repository.
+2.	Crée une branche pour ta fonctionnalité (git checkout -b feature/nom-de-fonctionnalite).
+3.	Commit tes modifications (git commit -am 'Ajout d'une nouvelle fonctionnalité').
+4.	Pousse ta branche (git push origin feature/nom-de-fonctionnalite).
+5.	Ouvre une Pull Request.
+
+## Licence
+Ce projet est sous licence MIT.
