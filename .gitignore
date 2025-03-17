@@ -13,3 +13,6 @@ __pycache__/
 
 # Ignorer les rapports de Flake8
 flake8_rapport/
+
+#
+data/
