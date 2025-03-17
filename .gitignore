@@ -1,0 +1,15 @@
+# Ignorer l'environnement virtuel
+.venv/
+venv/
+
+# Ignorer les fichiers temporaires Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignorer les fichiers spécifiques à PyCharm
+.idea/
+.vscode/
+
+# Ignorer les rapports de Flake8
+flake8_rapport/
