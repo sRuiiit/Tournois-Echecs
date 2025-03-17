@@ -17,9 +17,7 @@ class Match:
         self.score2 = 0
 
     def enregistrer_resultat(self, score1: float, score2: float):
-        """
-        Enregistre le résultat du match et met à jour les scores des joueurs.
-        """
+        """Enregistre le résultat du match et met à jour les joueurs."""
         print(f"📌 Résultat du match : {self.joueur1.nom} ({score1}) vs {self.joueur2.nom} ({score2})")  # Debug
 
         self.joueur1.ajouter_points(score1)
@@ -27,7 +25,6 @@ class Match:
 
         self.score1 = score1
         self.score2 = score2
-
     def __str__(self):
         """Retourne une représentation lisible du match."""
         return f"{self.joueur1} vs {self.joueur2} - Score: {self.score1}-{self.score2}"

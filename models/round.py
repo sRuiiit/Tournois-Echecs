@@ -38,11 +38,11 @@ class Round:
         for i, (score1, score2) in enumerate(resultats):
             print(f"🆚 Match {i + 1} : {self.matchs[i].joueur1.nom} vs {self.matchs[i].joueur2.nom}")  # Debug
             print(
-                f"   Avant: {self.matchs[i].joueur1.nom} ({self.matchs[i].joueur1.points} pts) - {self.matchs[i].joueur2.nom} ({self.matchs[i].joueur2.points} pts)")
+                f"   Avant : {self.matchs[i].joueur1.nom} ({self.matchs[i].joueur1.points} pts) - {self.matchs[i].joueur2.nom} ({self.matchs[i].joueur2.points} pts)")
 
             self.matchs[i].enregistrer_resultat(score1, score2)
 
             print(
-                f"   Après: {self.matchs[i].joueur1.nom} ({self.matchs[i].joueur1.points} pts) - {self.matchs[i].joueur2.nom} ({self.matchs[i].joueur2.points} pts)")  # Debug
+                f"   Après : {self.matchs[i].joueur1.nom} ({self.matchs[i].joueur1.points} pts) - {self.matchs[i].joueur2.nom} ({self.matchs[i].joueur2.points} pts)")  # Debug
 
         self.date_fin = datetime.datetime.now()

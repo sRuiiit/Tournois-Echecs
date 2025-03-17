@@ -21,9 +21,7 @@ class Player:
         return f"{self.prenom} {self.nom} (ID: {self.identifiant_echecs}) - {self.points} pts"
 
     def ajouter_points(self, points: float):
-        """
-        Ajoute des points au joueur après un match.
-        """
-        print(f"🟢 Ajout de {points} pts à {self.prenom} {self.nom} (avant: {self.points} pts)")  # Debug
+        """Ajoute des points au joueur après un match."""
+        print(f"🟢 Ajout de {points} pts à {self.prenom} {self.nom} (avant : {self.points} pts)")  # Debug
         self.points += points
         print(f"✅ Nouveau score de {self.prenom} {self.nom} : {self.points} pts")  # Debug

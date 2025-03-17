@@ -62,7 +62,7 @@ class CLI:
         print(f"✅ Joueur {prenom} {nom} ajouté avec succès !")
 
     def demarrer_tournoi(self):
-        """Démarre le tournoi."""
+        """Démarre le tournoi et permet de saisir les résultats."""
         if not self.tournoi:
             print("⛔ Veuillez d'abord créer un tournoi.")
             return
@@ -72,6 +72,21 @@ class CLI:
 
         self.tournoi.demarrer_tournoi()
         print(f"🏁 Tournoi '{self.tournoi.nom}' démarré avec {len(self.tournoi.joueurs)} joueurs !")
+
+        # Demander les résultats après chaque tour
+        for numero_tour, tour in enumerate(self.tournoi.tours, 1):
+            print(f"\n📊 {tour.nom} - Résultats :")
+            resultats = []
+
+            for match in tour.matchs:
+                print(f"{match.joueur1.nom} vs {match.joueur2.nom}")
+                score1 = float(input(f"Score de {match.joueur1.nom} (0, 0.5 ou 1) : "))
+                score2 = float(input(f"Score de {match.joueur2.nom} (0, 0.5 ou 1) : "))
+                resultats.append((score1, score2))
+
+            # Enregistrer les résultats du tour
+            self.tournoi.enregistrer_resultats_tour(numero_tour, resultats)
+            print(f"✅ Résultats enregistrés pour {tour.nom} !")
 
     def afficher_resultats(self):
         """Affiche les résultats du tournoi."""

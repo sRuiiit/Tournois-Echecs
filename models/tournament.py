@@ -1,6 +1,7 @@
-from models.round import Round
-from models.player import Player
+import datetime
 import json
+from models.player import Player  # Import de Player
+from models.round import Round
 
 class Tournament:
     """Gère un tournoi d'échecs avec plusieurs tours et joueurs."""
@@ -28,15 +29,25 @@ class Tournament:
             self.tours.append(tour)
 
     def enregistrer_resultats_tour(self, numero_tour: int, resultats: list[tuple[float, float]]):
-        """Enregistre les résultats d'un tour donné."""
         if numero_tour < 1 or numero_tour > len(self.tours):
             raise ValueError("Numéro de tour invalide.")
 
-        print(f"📊 Enregistrement des résultats du tour {numero_tour}...")  # Debug
         tour = self.tours[numero_tour - 1]
-
-        print(f"🔍 Avant mise à jour : {[(j.prenom, j.nom, j.points) for j in self.joueurs]}")  # Debug
-
         tour.enregistrer_resultats(resultats)
 
-        print(f"✅ Après mise à jour : {[(j.prenom, j.nom, j.points) for j in self.joueurs]}")  # Debug
+    def sauvegarder_tournoi(self, fichier: str):
+        """Sauvegarde le tournoi sous format JSON."""
+        data = {
+            "nom": self.nom,
+            "lieu": self.lieu,
+            "date_debut": self.date_debut,
+            "date_fin": self.date_fin,
+            "nombre_tours": self.nombre_tours,
+            "joueurs": [{"nom": j.nom, "prenom": j.prenom, "id": j.identifiant_echecs, "points": j.points} for j in self.joueurs],
+            "tours": [tour.nom for tour in self.tours],
+            "description": self.description,
+        }
+        with open(fichier, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4)
+
+        print(f"💾 Tournoi sauvegardé dans '{fichier}'")
