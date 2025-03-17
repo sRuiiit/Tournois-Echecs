@@ -17,14 +17,17 @@ Ce projet permet de gérer des tournois d'échecs en ligne de commande (CLI) et 
    git clone https://github.com/votre_utilisateur/Tournois-Echecs.git
    cd Tournois-Echecs
 
-2.	Créez un environnement virtuel et activez-le :
+2. Créez un environnement virtuel et activez-le :
+   ```bash
    pip install -r requirements.txt
 
-3.	Installez les dépendances :
+3. Installez les dépendances :
+   ```bash
    pip install -r requirements.txt
 
 ## Utilisation
 1. Pour démarrer le programme, exécutez le script suivant :
+   ```bash
    python main.py
 2.	Suivez les instructions dans le terminal pour créer un tournoi, ajouter des joueurs et saisir les résultats des matchs.
 
