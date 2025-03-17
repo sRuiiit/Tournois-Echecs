@@ -7,7 +7,7 @@ class Player:
 
         :param nom: Nom de famille du joueur
         :param prenom: Prénom du joueur
-        :param date_naissance: Date de naissance du joueur (format YYYY-MM-DD)
+        :param date_naissance: Date de naissance (format YYYY-MM-DD)
         :param identifiant_echecs: Identifiant unique de la Fédération d'échecs (ex: AB12345)
         """
         self.nom = nom
@@ -23,7 +23,7 @@ class Player:
     def ajouter_points(self, points: float):
         """
         Ajoute des points au joueur après un match.
-
-        :param points: Nombre de points à ajouter (0, 0.5 ou 1)
         """
+        print(f"🟢 Ajout de {points} pts à {self.prenom} {self.nom} (avant: {self.points} pts)")  # Debug
         self.points += points
+        print(f"✅ Nouveau score de {self.prenom} {self.nom} : {self.points} pts")  # Debug
