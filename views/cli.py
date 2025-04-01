@@ -1,11 +1,11 @@
-from models.player import Player
-from models.tournament import Tournament
+from models.player import Player # importe la classe Player du module models.player
+from models.tournament import Tournament # importe la classe Tournament du module models.tournament
 
 class CLI:
-    """Interface en ligne de commande pour gérer le tournoi d'échecs."""
+    """command line interface pour gérer le tournoi d'échecs."""
 
     def __init__(self):
-        """Initialise les variables du programme."""
+        """Initialise les variables du programme. Crée un tournoi vide."""
         self.tournoi = None
 
     def afficher_menu_principal(self):
