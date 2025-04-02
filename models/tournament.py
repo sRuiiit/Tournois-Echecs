@@ -1,6 +1,4 @@
-import datetime
-import json
-import os
+from tinydb import TinyDB, Query
 from models.player import Player  # Import de Player
 from models.round import Round
 
@@ -38,6 +36,7 @@ class Tournament:
 
     def sauvegarder_tournoi(self, fichier: str):
         """Sauvegarde le tournoi sous format JSON."""
+        db = TinyDB(fichier)
         data = {
             "nom": self.nom,
             "lieu": self.lieu,
@@ -48,12 +47,8 @@ class Tournament:
             "tours": [tour.nom for tour in self.tours],
             "description": self.description,
         }
-        # Utilisation d'un chemin absolu
-        chemin_absolu = os.path.abspath(fichier)
-        with open(chemin_absolu, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=4)
-
-        print(f"💾 Tournoi sauvegardé dans '{chemin_absolu}'")
+        db.insert(data)
+        print(f"💾 Tournoi sauvegardé dans '{fichier}'")
 
     @staticmethod
     def charger_tournoi(fichier, nom_tournoi):
