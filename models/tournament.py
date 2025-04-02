@@ -49,7 +49,7 @@ class Tournament:
         Tournoi = Query()
 
         # Utiliser le timestamp pour générer un ID unique
-        self.id = int(self.timestamp)
+        self.id = f"TOUR-{int(self.timestamp) % 10000:04d}"
 
         data = {
             "id": self.id,
