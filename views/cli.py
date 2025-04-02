@@ -71,13 +71,13 @@ class CLI:
             db = TinyDB(chemin_complet)
             tournois = db.all()
             for tournoi in tournois:
-                print(f"ID: {tournoi.doc_id}, Nom: {tournoi['nom']}")
+                print(f"ID: {tournoi['id']}, Nom: {tournoi['nom']}")
 
-        id_tournoi = int(input("➡️  Entrez l'ID du tournoi : "))
+        id_tournoi = input("➡️  Entrez l'ID du tournoi (format TOUR-nnnn) : ")
         for fichier in fichiers:
             chemin_complet = os.path.join(self.dossier_db, fichier)
             db = TinyDB(chemin_complet)
-            tournoi = db.get(doc_id=id_tournoi)
+            tournoi = db.get(Query().id == id_tournoi)
             if tournoi:
                 return Tournament.charger_tournoi(chemin_complet, tournoi['nom'])
         print("⛔ Tournoi non trouvé.")
