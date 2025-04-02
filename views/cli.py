@@ -1,5 +1,5 @@
-from models.player import Player # importe la classe Player du module models.player
-from models.tournament import Tournament # importe la classe Tournament du module models.tournament
+from models.player import Player
+from models.tournament import Tournament
 
 class CLI:
     """command line interface pour gérer le tournoi d'échecs."""
@@ -7,6 +7,7 @@ class CLI:
     def __init__(self):
         """Initialise les variables du programme. Crée un tournoi vide."""
         self.tournoi = None
+        self.dossier_db = 'data'  # Chemin vers le dossier de la base de données
 
     def afficher_menu_principal(self):
         """Affiche le menu principal et gère les choix de l'utilisateur."""
@@ -17,7 +18,8 @@ class CLI:
             print("3. Démarrer le tournoi")
             print("4. Voir les résultats")
             print("5. Sauvegarder le tournoi")
-            print("6. Quitter")
+            print("6. Lister les tournois existants")
+            print("7. Quitter")
 
             choix = input("➡️  Faites votre choix : ")
 
@@ -32,6 +34,8 @@ class CLI:
             elif choix == "5":
                 self.sauvegarder_tournoi()
             elif choix == "6":
+                self.lister_tournois()
+            elif choix == "7":
                 print("👋 Merci d'avoir utilisé le gestionnaire de tournois !")
                 break
             else:
@@ -107,6 +111,10 @@ class CLI:
         fichier = f"data/{self.tournoi.nom.lower().replace(' ', '_')}.json"
         self.tournoi.sauvegarder_tournoi(fichier)
         print(f"💾 Tournoi sauvegardé dans '{fichier}'")
+
+    def lister_tournois(self):
+        """Liste tous les tournois existants."""
+        Tournament.lister_tournois(self.dossier_db)
 
 # Si ce fichier est exécuté directement, lancer le menu CLI
 if __name__ == "__main__":

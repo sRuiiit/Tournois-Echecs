@@ -1,3 +1,4 @@
+import os
 from tinydb import TinyDB, Query
 from models.player import Player  # Import de Player
 from models.round import Round
@@ -67,3 +68,17 @@ class Tournament:
         else:
             print(f"Le tournoi '{nom_tournoi}' n'a pas été trouvé.")
         return None
+
+    @staticmethod
+    def lister_tournois(dossier):
+        """Liste tous les tournois existants dans le dossier spécifié."""
+        fichiers = [f for f in os.listdir(dossier) if f.endswith('.json')]
+        if fichiers:
+            for fichier in fichiers:
+                chemin_complet = os.path.join(dossier, fichier)
+                db = TinyDB(chemin_complet)
+                tournois = db.all()
+                for tournoi in tournois:
+                    print(f"ID: {tournoi.doc_id}, Nom: {tournoi['nom']}")
+        else:
+            print("Aucun tournoi trouvé.")
