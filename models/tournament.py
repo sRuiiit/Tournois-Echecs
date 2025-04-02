@@ -1,5 +1,5 @@
 import os
-import uuid
+import time
 from tinydb import TinyDB, Query
 from models.player import Player
 from models.round import Round
@@ -8,7 +8,6 @@ class Tournament:
     """Gère un tournoi d'échecs avec plusieurs tours et joueurs. Sauvegarde fonctionnelle"""
 
     def __init__(self, nom: str, lieu: str, date_debut: str, date_fin: str, nombre_tours: int = 4):
-        self.id = str(uuid.uuid4())  # Génère un ID aléatoire
         self.nom = nom
         self.lieu = lieu
         self.date_debut = date_debut
@@ -17,6 +16,8 @@ class Tournament:
         self.tours = []
         self.joueurs = []
         self.description = ""
+        self.timestamp = time.time()  # Ajout du timestamp
+        self.id = None  # L'ID sera défini lors de la sauvegarde
 
     def ajouter_joueur(self, joueur: Player):
         self.joueurs.append(joueur)
@@ -46,11 +47,9 @@ class Tournament:
         """Sauvegarde le tournoi sous format JSON."""
         db = TinyDB(fichier)
         Tournoi = Query()
-        # Vérifiez si le tournoi existe déjà dans la base de données
-        result = db.search(Tournoi.id == self.id)
-        if result:
-            print(f"⚠️ Le tournoi avec l'ID {self.id} existe déjà.")
-            return
+
+        # Utiliser le timestamp pour générer un ID unique
+        self.id = int(self.timestamp)
 
         data = {
             "id": self.id,
@@ -59,13 +58,13 @@ class Tournament:
             "date_debut": self.date_debut,
             "date_fin": self.date_fin,
             "nombre_tours": self.nombre_tours,
-            "joueurs": [{"nom": j.nom, "prenom": j.prenom, "id": j.identifiant_echecs, "points": j.points} for j in
-                        self.joueurs],
+            "joueurs": [{"nom": j.nom, "prenom": j.prenom, "id": j.identifiant_echecs, "points": j.points} for j in self.joueurs],
             "tours": [tour.nom for tour in self.tours],
             "description": self.description,
+            "timestamp": self.timestamp
         }
         db.insert(data)
-        print(f"💾 Tournoi sauvegardé dans '{fichier}'")
+        print(f"💾 Tournoi sauvegardé dans '{fichier}' avec l'ID {self.id}")
 
     @staticmethod
     def charger_tournoi(fichier, nom_tournoi):
@@ -75,6 +74,8 @@ class Tournament:
         if result:
             data = result[0]
             tournoi = Tournament(data['nom'], data['lieu'], data['date_debut'], data['date_fin'])
+            tournoi.id = data['id']
+            tournoi.timestamp = data['timestamp']
             for joueur_data in data['joueurs']:
                 joueur = Player(joueur_data['nom'], joueur_data['prenom'], joueur_data['date_naissance'], joueur_data['id'])
                 joueur.points = joueur_data['points']
@@ -95,7 +96,7 @@ class Tournament:
                 db = TinyDB(chemin_complet)
                 tournois = db.all()
                 for tournoi in tournois:
-                    print(f"ID: {tournoi.doc_id}, Nom: {tournoi['nom']}")
+                    print(f"ID: {tournoi['id']}, Nom: {tournoi['nom']}")
         else:
             print("Aucun tournoi trouvé.")
 
