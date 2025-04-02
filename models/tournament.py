@@ -5,7 +5,7 @@ from models.player import Player  # Import de Player
 from models.round import Round
 
 class Tournament:
-    """Gère un tournoi d'échecs avec plusieurs tours et joueurs."""
+    """Gère un tournoi d'échecs avec plusieurs tours et joueurs. Sauvegarde fonctionnelle"""
 
     def __init__(self, nom: str, lieu: str, date_debut: str, date_fin: str, nombre_tours: int = 4):
         self.nom = nom
