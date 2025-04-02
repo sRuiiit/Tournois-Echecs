@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 from models.player import Player  # Import de Player
 from models.round import Round
 
@@ -47,7 +48,27 @@ class Tournament:
             "tours": [tour.nom for tour in self.tours],
             "description": self.description,
         }
-        with open(fichier, "w", encoding="utf-8") as f:
+        # Utilisation d'un chemin absolu
+        chemin_absolu = os.path.abspath(fichier)
+        with open(chemin_absolu, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
 
-        print(f"💾 Tournoi sauvegardé dans '{fichier}'")
+        print(f"💾 Tournoi sauvegardé dans '{chemin_absolu}'")
+
+    @staticmethod
+    def charger_tournoi(fichier, nom_tournoi):
+        db = TinyDB(fichier)
+        Tournoi = Query()
+        result = db.search(Tournoi.nom == nom_tournoi)
+        if result:
+            data = result[0]
+            tournoi = Tournament(data['nom'], data['lieu'], data['date_debut'], data['date_fin'])
+            for joueur_data in data['joueurs']:
+                joueur = Player(joueur_data['nom'], joueur_data['prenom'], joueur_data['date_naissance'], joueur_data['id'])
+                joueur.points = joueur_data['points']
+                tournoi.ajouter_joueur(joueur)
+            tournoi.tours = data['tours']
+            return tournoi
+        else:
+            print(f"Le tournoi '{nom_tournoi}' n'a pas été trouvé.")
+        return None
