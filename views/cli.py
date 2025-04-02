@@ -1,3 +1,5 @@
+import os
+from tinydb import TinyDB, Query
 from models.player import Player
 from models.tournament import Tournament
 
@@ -15,11 +17,13 @@ class CLI:
             print("\n🎉 Bienvenue dans le gestionnaire de tournois d'échecs 🎉")
             print("1. Créer un nouveau tournoi")
             print("2. Ajouter un joueur")
-            print("3. Démarrer le tournoi")
-            print("4. Voir les résultats")
-            print("5. Sauvegarder le tournoi")
-            print("6. Lister les tournois existants")
-            print("7. Quitter")
+            print("3. Retirer un joueur")
+            print("4. Démarrer le tournoi")
+            print("5. Voir les résultats")
+            print("6. Sauvegarder le tournoi")
+            print("7. Lister les tournois existants")
+            print("8. Afficher le tableau des résultats")
+            print("9. Quitter")
 
             choix = input("➡️  Faites votre choix : ")
 
@@ -28,14 +32,18 @@ class CLI:
             elif choix == "2":
                 self.ajouter_joueur()
             elif choix == "3":
-                self.demarrer_tournoi()
+                self.retirer_joueur()
             elif choix == "4":
-                self.afficher_resultats()
+                self.demarrer_tournoi()
             elif choix == "5":
-                self.sauvegarder_tournoi()
+                self.afficher_resultats()
             elif choix == "6":
-                self.lister_tournois()
+                self.sauvegarder_tournoi()
             elif choix == "7":
+                self.lister_tournois()
+            elif choix == "8":
+                self.tableau_resultats()
+            elif choix == "9":
                 print("👋 Merci d'avoir utilisé le gestionnaire de tournois !")
                 break
             else:
@@ -50,10 +58,35 @@ class CLI:
         self.tournoi = Tournament(nom, lieu, date_debut, date_fin)
         print(f"✅ Tournoi '{nom}' créé avec succès !")
 
+    def choisir_tournoi(self):
+        """Liste les tournois et demande à l'utilisateur de choisir l'ID du tournoi."""
+        fichiers = [f for f in os.listdir(self.dossier_db) if f.endswith('.json')]
+        if not fichiers:
+            print("⛔ Aucun tournoi trouvé.")
+            return None
+
+        print("\n📋 Liste des tournois :")
+        for fichier in fichiers:
+            chemin_complet = os.path.join(self.dossier_db, fichier)
+            db = TinyDB(chemin_complet)
+            tournois = db.all()
+            for tournoi in tournois:
+                print(f"ID: {tournoi.doc_id}, Nom: {tournoi['nom']}")
+
+        id_tournoi = int(input("➡️  Entrez l'ID du tournoi : "))
+        for fichier in fichiers:
+            chemin_complet = os.path.join(self.dossier_db, fichier)
+            db = TinyDB(chemin_complet)
+            tournoi = db.get(doc_id=id_tournoi)
+            if tournoi:
+                return Tournament.charger_tournoi(chemin_complet, tournoi['nom'])
+        print("⛔ Tournoi non trouvé.")
+        return None
+
     def ajouter_joueur(self):
         """Ajoute un joueur au tournoi."""
+        self.tournoi = self.choisir_tournoi()
         if not self.tournoi:
-            print("⛔ Veuillez d'abord créer un tournoi.")
             return
 
         nom = input("Nom du joueur : ")
@@ -65,10 +98,19 @@ class CLI:
         self.tournoi.ajouter_joueur(joueur)
         print(f"✅ Joueur {prenom} {nom} ajouté avec succès !")
 
+    def retirer_joueur(self):
+        """Retire un joueur du tournoi."""
+        self.tournoi = self.choisir_tournoi()
+        if not self.tournoi:
+            return
+
+        identifiant_echecs = input("Identifiant de la Fédération d'échecs du joueur à retirer : ")
+        self.tournoi.retirer_joueur(identifiant_echecs)
+
     def demarrer_tournoi(self):
         """Démarre le tournoi et permet de saisir les résultats."""
+        self.tournoi = self.choisir_tournoi()
         if not self.tournoi:
-            print("⛔ Veuillez d'abord créer un tournoi.")
             return
         if len(self.tournoi.joueurs) < 2:
             print("⛔ Il faut au moins 2 joueurs pour démarrer un tournoi.")
@@ -94,13 +136,11 @@ class CLI:
 
     def afficher_resultats(self):
         """Affiche les résultats du tournoi."""
+        self.tournoi = self.choisir_tournoi()
         if not self.tournoi:
-            print("⛔ Aucun tournoi en cours.")
             return
 
-        print(f"\n🏆 Résultats du tournoi '{self.tournoi.nom}':")
-        for joueur in sorted(self.tournoi.joueurs, key=lambda j: j.points, reverse=True):
-            print(f"{joueur.prenom} {joueur.nom} - {joueur.points} pts")
+        self.tournoi.afficher_resultats()
 
     def sauvegarder_tournoi(self):
         """Sauvegarde le tournoi en JSON."""
@@ -115,6 +155,10 @@ class CLI:
     def lister_tournois(self):
         """Liste tous les tournois existants."""
         Tournament.lister_tournois(self.dossier_db)
+
+    def tableau_resultats(self):
+        """Affiche un tableau des résultats pour chaque tournoi."""
+        Tournament.tableau_resultats(self.dossier_db)
 
 # Si ce fichier est exécuté directement, lancer le menu CLI
 if __name__ == "__main__":

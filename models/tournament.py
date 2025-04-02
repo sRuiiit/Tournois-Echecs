@@ -18,6 +18,11 @@ class Tournament:
 
     def ajouter_joueur(self, joueur: Player):
         self.joueurs.append(joueur)
+        print(f"✅ Joueur {joueur.prenom} {joueur.nom} ajouté au tournoi '{self.nom}'.")
+
+    def retirer_joueur(self, identifiant_echecs: str):
+        self.joueurs = [joueur for joueur in self.joueurs if joueur.identifiant_echecs != identifiant_echecs]
+        print(f"✅ Joueur avec l'identifiant {identifiant_echecs} retiré du tournoi '{self.nom}'.")
 
     def demarrer_tournoi(self):
         if len(self.joueurs) < 2:
@@ -80,5 +85,27 @@ class Tournament:
                 tournois = db.all()
                 for tournoi in tournois:
                     print(f"ID: {tournoi.doc_id}, Nom: {tournoi['nom']}")
+        else:
+            print("Aucun tournoi trouvé.")
+
+    def afficher_resultats(self):
+        """Affiche les résultats du tournoi."""
+        print(f"\n🏆 Résultats du tournoi '{self.nom}':")
+        for joueur in sorted(self.joueurs, key=lambda j: j.points, reverse=True):
+            print(f"{joueur.prenom} {joueur.nom} - {joueur.points} pts")
+
+    @staticmethod
+    def tableau_resultats(dossier):
+        """Affiche un tableau des résultats pour chaque tournoi."""
+        fichiers = [f for f in os.listdir(dossier) if f.endswith('.json')]
+        if fichiers:
+            for fichier in fichiers:
+                chemin_complet = os.path.join(dossier, fichier)
+                db = TinyDB(chemin_complet)
+                tournois = db.all()
+                for tournoi in tournois:
+                    print(f"\n🏆 Résultats du tournoi '{tournoi['nom']}':")
+                    for joueur in sorted(tournoi['joueurs'], key=lambda j: j['points'], reverse=True):
+                        print(f"{joueur['prenom']} {joueur['nom']} - {joueur['points']} pts")
         else:
             print("Aucun tournoi trouvé.")
