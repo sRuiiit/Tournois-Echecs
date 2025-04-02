@@ -150,7 +150,6 @@ class CLI:
 
         fichier = f"data/{self.tournoi.nom.lower().replace(' ', '_')}.json"
         self.tournoi.sauvegarder_tournoi(fichier)
-        print(f"💾 Tournoi sauvegardé dans '{fichier}'")
 
     def lister_tournois(self):
         """Liste tous les tournois existants."""

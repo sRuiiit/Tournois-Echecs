@@ -1,12 +1,14 @@
 import os
+import uuid
 from tinydb import TinyDB, Query
-from models.player import Player  # Import de Player
+from models.player import Player
 from models.round import Round
 
 class Tournament:
     """Gère un tournoi d'échecs avec plusieurs tours et joueurs. Sauvegarde fonctionnelle"""
 
     def __init__(self, nom: str, lieu: str, date_debut: str, date_fin: str, nombre_tours: int = 4):
+        self.id = str(uuid.uuid4())  # Génère un ID aléatoire
         self.nom = nom
         self.lieu = lieu
         self.date_debut = date_debut
@@ -43,13 +45,22 @@ class Tournament:
     def sauvegarder_tournoi(self, fichier: str):
         """Sauvegarde le tournoi sous format JSON."""
         db = TinyDB(fichier)
+        Tournoi = Query()
+        # Vérifiez si le tournoi existe déjà dans la base de données
+        result = db.search(Tournoi.id == self.id)
+        if result:
+            print(f"⚠️ Le tournoi avec l'ID {self.id} existe déjà.")
+            return
+
         data = {
+            "id": self.id,
             "nom": self.nom,
             "lieu": self.lieu,
             "date_debut": self.date_debut,
             "date_fin": self.date_fin,
             "nombre_tours": self.nombre_tours,
-            "joueurs": [{"nom": j.nom, "prenom": j.prenom, "id": j.identifiant_echecs, "points": j.points} for j in self.joueurs],
+            "joueurs": [{"nom": j.nom, "prenom": j.prenom, "id": j.identifiant_echecs, "points": j.points} for j in
+                        self.joueurs],
             "tours": [tour.nom for tour in self.tours],
             "description": self.description,
         }
