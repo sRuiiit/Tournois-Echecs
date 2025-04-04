@@ -67,18 +67,18 @@ class CLI:
 
     def effacer_tournoi(self):
         """Efface un tournoi existant."""
-        id_tournoi = input("➡️  Entrez l'ID du tournoi à effacer (format TOUR-nnnn) : ")
-        fichiers = [f for f in os.listdir(self.dossier_db) if f.endswith('.json')]
-        for fichier in fichiers:
-            chemin_complet = os.path.join(self.dossier_db, fichier)
-            db = TinyDB(chemin_complet)
-            tournoi = db.get(Query().id == id_tournoi)
-            if tournoi:
-                db.remove(Query().id == id_tournoi)
-                print(f"🗑️ Tournoi '{tournoi['nom']}' effacé avec succès !")
-                self.demander_sauvegarde()
-                return
-        print("⛔ Tournoi non trouvé.")
+        self.tournoi = self.choisir_tournoi()
+        if not self.tournoi:
+            return
+
+        fichier_tournoi = f"{self.tournoi.nom.lower().replace(' ', '_')}.json"
+        chemin_complet = os.path.join(self.dossier_db, fichier_tournoi)
+
+        if os.path.exists(chemin_complet):
+            os.remove(chemin_complet)
+            print(f"🗑️ Tournoi '{self.tournoi.nom}' effacé avec succès !")
+        else:
+            print("⛔ Tournoi non trouvé.")
 
     def ajouter_joueur(self):
         """Ajoute un joueur au tournoi."""
@@ -102,9 +102,10 @@ class CLI:
         if not self.tournoi:
             return
 
-        identifiant_echecs = input("Identifiant de la Fédération d'échecs du joueur à retirer : ")
-        self.tournoi.retirer_joueur(identifiant_echecs)
-        self.demander_sauvegarde()
+        joueur = self.choisir_joueur()
+        if joueur:
+            self.tournoi.retirer_joueur(joueur.identifiant_echecs)
+            self.demander_sauvegarde()
 
     def lister_joueurs(self):
         """Liste tous les joueurs et les tournois auxquels ils participent."""
@@ -185,32 +186,47 @@ class CLI:
             self.sauvegarder_tournoi()
 
     def choisir_tournoi(self):
-        """Liste les tournois et demande à l'utilisateur de choisir l'ID du tournoi."""
+        """Liste les tournois et demande à l'utilisateur de choisir un tournoi par numéro."""
         fichiers = [f for f in os.listdir(self.dossier_db) if f.endswith('.json')]
         if not fichiers:
             print("⛔ Aucun tournoi trouvé.")
             return None
 
-        tournois_vus = set()
+        tournois = []
         print("\n📋 Liste des tournois :")
         for fichier in fichiers:
             chemin_complet = os.path.join(self.dossier_db, fichier)
             db = TinyDB(chemin_complet)
-            tournois = db.all()
-            for tournoi in tournois:
-                if tournoi['id'] not in tournois_vus:
-                    print(f"ID: {tournoi['id']}, Nom: {tournoi['nom']}")
-                    tournois_vus.add(tournoi['id'])
+            tournois.extend(db.all())
 
-        id_tournoi = input("➡️  Entrez l'ID du tournoi (format TOUR-nnnn) : ")
-        for fichier in fichiers:
-            chemin_complet = os.path.join(self.dossier_db, fichier)
-            db = TinyDB(chemin_complet)
-            tournoi = db.get(Query().id == id_tournoi)
-            if tournoi:
-                return Tournament.charger_tournoi(chemin_complet, tournoi['nom'])
-        print("⛔ Tournoi non trouvé.")
-        return None
+        for index, tournoi in enumerate(tournois, start=1):
+            print(f"{index}. ID: {tournoi['id']}, Nom: {tournoi['nom']}")
+
+        choix = int(input("➡️  Entrez le numéro du tournoi : ")) - 1
+        if 0 <= choix < len(tournois):
+            tournoi = tournois[choix]
+            return Tournament.charger_tournoi(
+                os.path.join(self.dossier_db, f"{tournoi['nom'].lower().replace(' ', '_')}.json"), tournoi['nom'])
+        else:
+            print("⛔ Choix invalide.")
+            return None
+
+    def choisir_joueur(self):
+        """Liste les joueurs et demande à l'utilisateur de choisir un joueur par numéro."""
+        if not self.tournoi or not self.tournoi.joueurs:
+            print("⛔ Aucun joueur trouvé.")
+            return None
+
+        print("\n📋 Liste des joueurs :")
+        for index, joueur in enumerate(self.tournoi.joueurs, start=1):
+            print(f"{index}. {joueur.prenom} {joueur.nom} (ID: {joueur.identifiant_echecs})")
+
+        choix = int(input("➡️  Entrez le numéro du joueur : ")) - 1
+        if 0 <= choix < len(self.tournoi.joueurs):
+            return self.tournoi.joueurs[choix]
+        else:
+            print("⛔ Choix invalide.")
+            return None
 
 # Si ce fichier est exécuté directement, lancer le menu CLI
 if __name__ == "__main__":
